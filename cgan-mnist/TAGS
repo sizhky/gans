@@ -1,0 +1,47 @@
+
+cgan/data.py,209
+transform = transforms.Compose([transform5,88
+batch_size = 256batch_size10,210
+data_loader = torch.utils.data.DataLoader(MNIST('~/data', train=True, download=True, transform=transform),data_loader11,227
+
+cgan/generator.py,573
+class Generator(nn.Module):Generator4,35
+    def __init__(self):__init__5,63
+    def forward(self, z, labels):forward21,500
+class Reshape(nn.Module):Reshape30,859
+    def __init__(self, *args):__init__31,885
+    def forward(self, x):forward35,983
+class OldCNNGenerator(nn.Module):OldCNNGenerator38,1044
+    def __init__(self, emb_sz=32):__init__39,1078
+    def forward(self, z, labels):forward57,1675
+class CNNGenerator(nn.Module):CNNGenerator64,1884
+    def __init__(self, emb_sz=32):__init__65,1915
+    def forward(self, z, labels):forward82,2480
+
+cgan/discriminator.py,138
+class Discriminator(nn.Module):Discriminator4,35
+    def __init__(self):__init__5,67
+    def forward(self, x, labels):forward24,592
+
+cgan_main.py,1474
+generator = Generator().cuda()generator12,279
+discriminator = Discriminator().cuda()discriminator13,310
+criterion = nn.BCELoss()criterion15,350
+d_optimizer = torch.optim.Adam(discriminator.parameters(), lr=1e-5)d_optimizer16,375
+g_optimizer = torch.optim.Adam(generator.parameters(), lr=1e-5)g_optimizer17,443
+writer = SummaryWriter(comment=':cnn2:lr=1e-5:bn')writer19,508
+def generator_train_step(batch_size, discriminator, generator, g_optimizer, criterion):generator_train_step21,560
+def discriminator_train_step(batch_size, discriminator, generator, d_optimizer, criterion, real_images, labels):discriminator_train_step32,1034
+num_epochs = 150num_epochs51,1770
+n_critic = 5n_critic52,1787
+display_step = 50display_step53,1800
+save_step = 1000save_step54,1818
+        step = epoch * len(data_loader) + i + 1step59,1982
+        real_images = images.cuda()real_images60,2030
+        labels = labels.cuda()labels61,2066
+        d_loss = discriminator_train_step(len(real_images), discriminator,d_loss64,2124
+            g_loss = generator_train_step(batch_size, discriminator, generator, g_optimizer, criterion)g_loss70,2369
+            z = torch.randn(100, 100).cuda()z77,2671
+            labels = torch.LongTensor(torch.cat([torch.arange(10)]*10)).cuda()labels78,2716
+            sample_images = generator(z, labels).unsqueeze(1)sample_images79,2795
+            grid = make_grid(sample_images, nrow=10, normalize=True)grid80,2857
